@@ -12,19 +12,22 @@ for i = 3: 7
     end
 end
 %fric(1: length(Re),1: length(rough)) = .1;
-fric(1: length(Re),1) = .1;
-for r= 1: length(rough)
+fric(1: length(Re),1) = 1;
+%for r= 1: length(rough)
     for i = 1: length(Re)
+        fric(i)
+        Re(i)
         while error >0.00001
-            temp = fric(i,r)
-            inter = -2* log((3.7* rough(r))^-1 + (2.51/Re(i) * fric(i,r)^.5))
-            fric(i,r) = inter ^-2
-            error = temp - fric(i,r)
+            temp = fric(i);
+            
+            inter = -2* log10( rough(8)/3.7 + (2.51/Re(i) / fric(i)^.5))
+            fric(i) = inter ^-2;
+            error = temp - fric(i);
             
         end
         error =1;
     end 
-end
+% end
 
 loglog(Re, fric, 'x')
 %plot(Re, fric, '*')
