@@ -1,19 +1,24 @@
 function Colebrook
 %COLEBROOK'S DIAGRAM
 %Relative roughness
-r= [0,1e-5,5e-5,1e-4,2e-4:2e-4:1e-3,2e-3:2e-3:1e-2,1.5e-2,2e-2:1e-2:5e-2];
-R=logspace(3,8,100);                 %Reynold's No.
-L= 600:2300;                         %Laminar Flow
-T= 2300:R(R>2300);                   %Turbulent Flow
+% r= [0,1e-5,5e-5,1e-4,2e-4:2e-4:1e-3,2e-3:2e-3:1e-2,1.5e-2,2e-2:1e-2:5e-2];
+% R=logspace(3,8,100);                 %Reynold's No.
+% L= 600:2300;                         %Laminar Flow
+% T= 2300:R(R>2300);                   %Turbulent Flow
 % Friction factor curves
-for i=1:length(L)
-loglog(L(i),64/L(i),'b','linewidth',1)
-end
-for i=1:length(r)
- for j=1:length(R)
- loglog(T(j),colebrook(T(j),r(i)),'b','linewidth',1)
- end
-end
+
+
+
+
+% for i=1:length(L)
+% loglog(L(i),64/L(i),'b','linewidth',1)
+% end
+% for i=1:length(r)
+%  for j=1:length(R)
+%  loglog(T(j),colebrook(T(j),r(i)),'b','linewidth',1)
+%  end
+%  
+% end
 figure(1), clf, cf=gcf; ca=gca;
 set(cf,'PaperOrientation','landscape',...
   'name','MoodyDiagram','PaperUnits','points');
@@ -46,22 +51,63 @@ logmajorgrid('y',1,0.1)
 logminorgrid('x',7,0.0003,0)
 logmajorgrid('x',0,0.1)
 logmajorgrid('x',-1,0.4)
+
+
+%  Additional program  Added from my program
+re = 1000;
+rough = [500,100, 50,10,5,1,.5,.1, 0]* 10^-4;
+
+error =1;
+a = 0;
+
+for i = 3: 7
+    for j = 1:10
+        Re(j+ 10*(i-3),1) = j* 10^i;
+    end
+end
+fric(1: length(Re),1: length(rough)) = .1;
+%fric(1: length(Re),1) = 1;
+for r= 1: length(rough)
+    for i = 1: length(Re)
+        fric(i)
+        Re(i)
+        while error >0.00001
+            temp = fric(i,r);
+            
+            inter = -2* log10( rough(r)/3.7 + (2.51/Re(i) / fric(i,r)^.5))
+            fric(i,r) = inter ^-2;
+            error = temp - fric(i,r);
+            
+        end
+        error =1;
+    end 
+ end
+
+loglog(Re, fric, '*-')
+xlabel('Reynolds number, Rep')
+ylabel('Friction factor, fp')
+title('Plot of Rep vs fp for various roughness')
+%legend('.05 e/d', '.01 e/d', '.005 e/d', '.001 e/d', '5e-1 e/d', '1e-4 e/d', '0 e/d')
+%legend('','','','','','','','','','','','','','','','','','','','','','.05 e/d', '.01 e/d', '.005 e/d', '.001 e/d', '5e-1 e/d', '1e-4 e/d', '0 e/d')
+% upto here
+
+
 end
 
-function f=colebrook(T,r)
-% Colebrook Equation
-%   f = Darcy-Weisbach friction factor
-%   R = Reynolds number
-%   r = relative roughness
-
- f0=0.04
-for i=1:length(r)
-  for j=1:length(T)  
-    f0=(2*log10(r(i)/3.7+2.51/T(j)/sqrt(f0)))^-2;
-  end
-  f(i)=f0;
-end
-end
+% function f=colebrook(T,r)
+% % Colebrook Equation
+% %   f = Darcy-Weisbach friction factor
+% %   R = Reynolds number
+% %   r = relative roughness
+% 
+%  f0=0.04
+% for i=1:length(r)
+%   for j=1:length(T)  
+%     f0=(2*log10(r(i)/3.7+2.51/T(j)/sqrt(f0)))^-2;
+%   end
+%   f(i)=f0;
+% end
+% end
 
 
 
